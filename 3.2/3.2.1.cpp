@@ -146,6 +146,7 @@ void create_fa() {
         for(int i=l;i<l+num;i++){
             file<<strs[i];
         }
+        file<<endl;
         int t = l;
         for (int idx = 0; idx < pp.size(); idx++) {
             int plen = maps[pp[idx]].length();
