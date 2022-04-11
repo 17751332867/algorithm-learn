@@ -10,6 +10,7 @@ int num = 200, Size = 1000;
 int core_length_l=3000,core_length_r=5000;
 int sub_length_l=500,sub_length_r=500;
 string base_dir="fa";
+string graph_txt="graph.txt";
 vector<int> G[100];
 map<int, string> maps;
 int din[100], dout[100];
@@ -90,7 +91,7 @@ void print_gfa() {
 void input() {
 
     ifstream in;
-    in.open("graph.txt");
+    in.open(graph_txt);
     in >> n >> m;
     for (int i = 1; i <= n; i++) {
         int num;
@@ -185,9 +186,19 @@ int main(int argc, char * argv[]) {
         core_length_l= toNum(argv[3]);core_length_r= toNum(argv[4]);
         sub_length_l= toNum(argv[5]);sub_length_r= toNum(argv[6]);
     }
+    if(argc==9){
+        num = toNum(argv[1]);Size= toNum(argv[2]);
+        core_length_l= toNum(argv[3]);core_length_r= toNum(argv[4]);
+        sub_length_l= toNum(argv[5]);sub_length_r= toNum(argv[6]);
+        graph_txt=string(argv[7]);base_dir=string(argv[8]);
+    }
+    string command = "mkdir -p " + base_dir;
+    system(command.c_str());
     cerr<<"we will make "<<Size<<" reads with length "<<num<<endl;
     cerr<<"the core dna length:"<<core_length_l<<"-"<<core_length_r<<endl;
     cerr<<"the sub dna length:"<<sub_length_l<<"-"<<sub_length_r<<endl;
+    cerr<<"this program will read graph from "<<graph_txt<<endl;
+    cerr<<"write result to dir "<<base_dir<<endl;
     srand((unsigned) time(NULL));
     ofstream out;
     out.open(base_dir+"/res.txt");
