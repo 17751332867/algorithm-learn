@@ -133,7 +133,7 @@ void create_fa() {
     string strs = "";
     vector<int> pp = random_choice(paths);
     for (int i = 0; i < pp.size(); i++) {
-        strs += maps[i];
+        strs += maps[pp[i]];
     }
     ofstream file;
     ofstream res;
