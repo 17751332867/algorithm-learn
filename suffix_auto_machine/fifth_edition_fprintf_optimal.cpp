@@ -13,7 +13,20 @@ const int CHAR_NUM = 5;   // 字符集个数，注意修改下方的 (-'a')
 const int REPEATS_SIZE = 8;
 vector<pair<int, int> > res;
 int table[256];
-
+struct GAF{
+    char name[MAXN];
+    int query_length;
+    int query_start;
+    int query_end;
+    char pos;
+    vector<int> path;
+    int path_length;
+    int start_pos;
+    int end_pos;
+    int match;
+    int align_length;
+    int mapping_quality;
+} gaf;
 void init() {
     table['A'] = 0;
     table['C'] = 1;
@@ -114,13 +127,13 @@ char s[MAXN];
 int v[MAXN], path[MAXN],w[MAXN],first[MAXN];
 int cnt_v=0,cnt_path=0,cnt_w=0,cnt_first=0;
 
-int main() {
+int main(int argc, char * argv[]) {
     init();
     ios::sync_with_stdio(false);
     int n;
     ifstream in;
     clock_t begin, end;
-    in.open("D:\\workspace\\clion-workspace\\algorithm-learn\\suffix_auto_machine\\graph.gfa");
+    in.open(argv[1]);
     begin = clock();
     exSam.init();
     while (true) {
@@ -135,11 +148,12 @@ int main() {
     }
     exSam.build();
     in.close();
-    FILE* instream =  fopen("D:\\workspace\\clion-workspace\\algorithm-learn\\suffix_auto_machine\\read200.fa","r");
-    FILE* outstream = fopen("D:\\workspace\\clion-workspace\\algorithm-learn\\suffix_auto_machine\\path200.txt","w");
+    FILE* instream =  fopen(argv[2],"r");
     while (fscanf(instream,"%s",s)!=EOF) {
+        strcpy(gaf.name,s);
         fscanf(instream,"%s",s);
         int len = strlen(s);
+        gaf.query_length = len;
         int u = 0;
         cnt_v=0,cnt_path=0,cnt_w=0,cnt_first=0;
         for (int i = 0; i < len; i++) {
@@ -163,11 +177,30 @@ int main() {
             path[cnt_path++]=(v[cnt_v-1]);
             first[cnt_first++]=(w[cnt_w-1]);
         }
-        fprintf(outstream,"%d %d ",(cnt_path>=1?path[0]:exSam.id[u]),(cnt_first>=1?first[0]:exSam.first_pos[u] - len + 1));
-        for(int i=0;i<cnt_path;i++){
-            fprintf(outstream,"<%d",path[i]);
+        int res = (cnt_first>=1?first[0]:exSam.first_pos[u] - len + 1);
+        gaf.query_start = 0;
+        gaf.query_end = len;
+        gaf.pos = '+';
+        if(res>=0){
+            gaf.start_pos = res;
+            gaf.end_pos = gaf.start_pos+len;
+            gaf.match = len;
+            gaf.path_length = len;
+            gaf.align_length = len;
+            gaf.mapping_quality = 60;
+        }else{
+            gaf.start_pos = res;
+            gaf.end_pos = res+len;
+            gaf.match = -1;
+            gaf.path_length = -1;
+            gaf.align_length = -1;
+            gaf.mapping_quality = 0;
         }
-        fprintf(outstream,"\n");
+        printf("%s\t%d\t%d\t%d\t%c\t",gaf.name,gaf.query_length,gaf.query_start,gaf.query_end,gaf.pos);
+        for(int i=0;i<cnt_path;i++){
+            printf("<%d",path[i]);
+        }
+        printf("\t%d\t%d\t%d\t%d\t%d\t%d\n",gaf.path_length,gaf.start_pos,gaf.end_pos,gaf.match,gaf.align_length,gaf.mapping_quality);
     }
     end = clock();
     cout << end - begin << endl;
